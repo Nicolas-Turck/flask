@@ -143,17 +143,15 @@ def edit_profile():
 
 @app.route('/delete_post', methods=['GET', 'POST'])
 @login_required
-# N'oubliez pas d'ajouter un paramètre id dans la fonction correspondant au paramètre route
 def delete_post():
+    """method for delete post in bdd with ID"""
     form = DeletePost(current_user.username)
     if form.validate_on_submit():
         current_user.id = form.postID.data
-        #current_user.about_me = form.about_me.data
         db.session.commit()
         flash('Your changes have been saved.')
         return redirect(url_for('edit_profile'))
     elif request.method == 'GET':
         form.user.id.data = current_user.username
-        #form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile',
                            form=form)
