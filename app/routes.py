@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, \
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, DeletePost, \
     ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User, Post
 from app.email import send_password_reset_email
@@ -141,16 +141,19 @@ def edit_profile():
                            form=form)
 
 
-@app.route('/delete_post/<int:id>')
+@app.route('/delete_post', methods=['GET', 'POST'])
 @login_required
 # N'oubliez pas d'ajouter un paramètre id dans la fonction correspondant au paramètre route
-def delete_post(id):
-    """Fonction pour supprimer une pensée dans la base de données"""
-    # Récupérez l'objet de pensée que nous voulons supprimer par son identifiant de la base de données
-    post = Post.query.get(id)
-    # si nous avons trouvé une pensée correspondante et qu'elle appartient à l'utilisateur connecté, nous la supprimons
-    if post and post.user == current_user:
-        db.session.delete(post)
+def delete_post():
+    form = DeletePost(current_user.username)
+    if form.validate_on_submit():
+        current_user.id = form.postID.data
+        #current_user.about_me = form.about_me.data
         db.session.commit()
-        flash("Post Deleted")
-    return redirect(url_for('index'))
+        flash('Your changes have been saved.')
+        return redirect(url_for('edit_profile'))
+    elif request.method == 'GET':
+        form.user.id.data = current_user.username
+        #form.about_me.data = current_user.about_me
+    return render_template('edit_profile.html', title='Edit Profile',
+                           form=form)
