@@ -141,33 +141,16 @@ def edit_profile():
                            form=form)
 
 
-@app.route('/follow/<username>')
+@app.route('/delete_post/<int:id>')
 @login_required
-def follow(username):
-    user = User.query.filter_by(username=username).first()
-    if user is None:
-        flash('User {} not found.'.format(username))
-        return redirect(url_for('index'))
-    if user == current_user:
-        flash('You cannot follow yourself!')
-        return redirect(url_for('user', username=username))
-    current_user.follow(user)
-    db.session.commit()
-    flash('You are following {}!'.format(username))
-    return redirect(url_for('user', username=username))
-
-
-@app.route('/unfollow/<username>')
-@login_required
-def unfollow(username):
-    user = User.query.filter_by(username=username).first()
-    if user is None:
-        flash('User {} not found.'.format(username))
-        return redirect(url_for('index'))
-    if user == current_user:
-        flash('You cannot unfollow yourself!')
-        return redirect(url_for('user', username=username))
-    current_user.unfollow(user)
-    db.session.commit()
-    flash('You are not following {}.'.format(username))
-    return redirect(url_for('user', username=username))
+# N'oubliez pas d'ajouter un paramètre id dans la fonction correspondant au paramètre route
+def delete_post(id):
+    """Fonction pour supprimer une pensée dans la base de données"""
+    # Récupérez l'objet de pensée que nous voulons supprimer par son identifiant de la base de données
+    post = Post.query.get(id)
+    # si nous avons trouvé une pensée correspondante et qu'elle appartient à l'utilisateur connecté, nous la supprimons
+    if post and post.user == current_user:
+        db.session.delete(post)
+        db.session.commit()
+        flash("Post Deleted")
+    return redirect(url_for('index'))

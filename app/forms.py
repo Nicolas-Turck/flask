@@ -62,3 +62,18 @@ class ResetPasswordForm(FlaskForm):
 class PostForm(FlaskForm):
     post = TextAreaField('Say something', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+class DeletePost(FlaskForm):
+    id = StringField('id', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+    """def __init__(self, original_id, *args, **kwargs):
+        super(DeletePost, self).__init__(*args, **kwargs)
+        self.original_id = original_id"""
+
+    """def validate_delete_post(self, id):
+        if id.data != self.original_id:
+            user = User.query.filter_by(username=self.username.data).first()
+            if user is not None:
+                raise ValidationError('Please use a different username.')"""
