@@ -7,6 +7,7 @@ from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, De
     ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User, Post
 from app.email import send_password_reset_email
+from .forms import *
 
 """i import login_required of flask login for required identification user for go to page selected """
 
@@ -147,11 +148,11 @@ def delete_post():
     """method for delete post in bdd with ID"""
     form = DeletePost(current_user.username)
     if form.validate_on_submit():
-        current_user.id = form.postID.data
+        current_user.id = form.id
         db.session.commit()
         flash('Your changes have been saved.')
         return redirect(url_for('edit_profile'))
     elif request.method == 'GET':
-        form.user.id.data = current_user.username
+        form.user.id = current_user.username
     return render_template('edit_profile.html', title='Edit Profile',
                            form=form)
