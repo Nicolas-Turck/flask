@@ -22,6 +22,7 @@ def before_request():
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+    """method for go to home page"""
     form = PostForm()
     if form.validate_on_submit():
         post = Post(body=form.post.data, author=current_user)
@@ -42,6 +43,7 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """method for login user and go to index page if user is aunthenticated"""
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
@@ -60,12 +62,14 @@ def login():
 
 @app.route('/logout')
 def logout():
+    """methgod for logout user account and return to index page login"""
     logout_user()
     return redirect(url_for('index'))
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    """method for create new account and retourn to index page"""
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = RegistrationForm()
@@ -81,6 +85,7 @@ def register():
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
+    """method for reset password and send email for change """
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = ResetPasswordRequestForm()
@@ -113,6 +118,7 @@ def reset_password(token):
 @app.route('/user/<username>')
 @login_required
 def user(username):
+    """home page of user after login and display is messages """
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(
@@ -128,6 +134,7 @@ def user(username):
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
+    """method for got to edit profile page for user change is data"""
     form = EditProfileForm(current_user.username)
     if form.validate_on_submit():
         current_user.username = form.username.data

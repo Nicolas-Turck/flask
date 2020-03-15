@@ -10,6 +10,7 @@ def send_async_email(app, msg):
 
 
 def send_email(subject, sender, recipients, text_body, html_body):
+    """method for register and send email"""
     msg = Message(subject, sender=sender, recipients=recipients)
     msg.body = text_body
     msg.html = html_body
@@ -17,6 +18,7 @@ def send_email(subject, sender, recipients, text_body, html_body):
 
 
 def send_password_reset_email(user):
+    """method for send email for reset password"""
     token = user.get_reset_password_token()
     send_email('[Microblog] Reset Your Password',
                sender=app.config['ADMINS'][0],
